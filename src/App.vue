@@ -28,7 +28,7 @@
         <v-btn depressed color="success" @click="goto('/crud')">CRUD</v-btn>
         <v-btn depressed color="success" @click="goto('/crudlocalstorage')">LocalStorage</v-btn>
         <v-btn depressed color="success" @click="goto('/crudfirestore')">Firestore</v-btn>
-        <v-btn to="/profile" target="_blank" text class="hidden-sm-and-down">
+        <v-btn v-if="signInState" to="/profile" target="_blank" text class="hidden-sm-and-down">
           <span class="mr-2">Profile</span>
           <v-icon>mdi-open-in-new</v-icon>
         </v-btn>

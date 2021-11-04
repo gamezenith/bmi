@@ -8,7 +8,10 @@ import ABC from "../components/HelloWorld.vue";
 import CRUDjson from "../views/CRUDjson.vue";
 import CRUDLocalStorage from "../views/CRUDLocalStorage.vue" 
 import CRUDFirestore from "../views/CRUDFirestore.vue" 
+import SigninForm from "../views/SigninForm.vue" 
+import Profile from "../views/Profile.vue" 
 
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 Vue.use(VueRouter);
 
@@ -18,6 +21,15 @@ const routes = [
     name: "Home",
     component: Home,
   },
+
+
+  {
+    path: "/signinform",
+    name: "Sign in Form",
+    component: SigninForm,
+  },
+
+
   {
     path: "/abc",
     name: "ABC",
@@ -37,6 +49,15 @@ const routes = [
     path: "/crudfirestore",
     name: "CRUDFirestore",
     component: CRUDFirestore,
+    meta: { 
+      requiresAuth: true, },
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
+    meta: { 
+      requiresAuth: true, },
   },
   {
     path: "/crudlocalstorage",
@@ -64,6 +85,22 @@ const router = new VueRouter({
   mode: "history",
   routes,
   // base: "/ite",
+});
+
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    const auth = getAuth(); 
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        next(); 
+      } else { 
+        next({ path: "/signinform" }); 
+      } 
+    }); 
+  } else { 
+    next(); 
+  } 
 });
 
 export default router;

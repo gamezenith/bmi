@@ -203,6 +203,8 @@ import {
   doc, deleteDoc, setDoc, Timestamp 
 } from "firebase/firestore";
 
+import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
+
 export default {
   data: () => ({
     bmiTable: [
@@ -288,6 +290,32 @@ export default {
       else if (bmi >= 18.5 && bmi < 23) return "green";
       else return "red";
     },
+    SignInAnonymously() { const auth = getAuth(); 
+    signInAnonymously(auth) 
+    .then(() => { 
+      // Signed in.. 
+      }) 
+      .catch((error) => { 
+        console.log(error); 
+        // ... 
+        });   
+    },
+
+    authStateChanged() { 
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => { 
+        if (user) { 
+          // User is signed in, see docs for a list of available properties 
+          // https://firebase.google.com/docs/reference/js/firebase.User 
+          console.log(user); 
+          // ... 
+          } else { 
+            // User is signed out 
+            // ... 
+          } 
+      }); 
+    },
+
 
     validate() {
       if (this.$refs.form.validate()) {
@@ -448,7 +476,10 @@ export default {
   },
   mounted() {
     // this.readItem();
+    this.SignInAnonymously(); 
+    this.authStateChanged();
     this.getItemFromFirestore();
+    
   },
 };
 </script>

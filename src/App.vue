@@ -1,11 +1,5 @@
 <template>
   <v-app id="inspire">
-
-
-
-
-
-
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
         <v-img
@@ -17,54 +11,38 @@
           width="40"
           @click="goto('/abc')"
         />
-        
 
-        <v-toolbar-title class="pointer" @click="goto('/')"
-          >BmiCalculator</v-toolbar-title
-        >
-        &nbsp;&nbsp;
-        <v-toolbar-title class="pointer" @click="goto('/guide')"
-          >Guide</v-toolbar-title
-        >
+        <v-toolbar-title class="pointer" @click="goto('/')">BmiCalculator</v-toolbar-title>&nbsp;&nbsp;
+        <v-toolbar-title class="pointer" @click="goto('/guide')">Guide</v-toolbar-title>
+        <v-btn v-if="!signInState" depressed color="success" @click="goto('/signinform')">Sign In</v-btn>
 
+        <v-btn v-else depressed color="success" @click="SignOut">Sign Out</v-btn>
         &nbsp;&nbsp;
         &nbsp;&nbsp;
-        
-        
       </div>
-
 
       <v-spacer></v-spacer>
 
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn depressed color="success" @click="goto('/crudjson')">
-          CRUD JSON
-        </v-btn>
-        <v-btn depressed color="success" @click="goto('/crud')">
-          CRUD
-        </v-btn>
-        <v-btn depressed color="success" @click="goto('/crudlocalstorage')">
-          LocalStorage
-        </v-btn>
-        <v-btn depressed color="success" @click="goto('/crudfirestore')">
-          Firestore
-        </v-btn>
-        <v-btn to="/about" target="_blank" text class="hidden-sm-and-down">
-          <span class="mr-2">Latest Release</span>
+        <v-btn depressed color="success" @click="goto('/crudjson')">CRUD JSON</v-btn>
+        <v-btn depressed color="success" @click="goto('/crud')">CRUD</v-btn>
+        <v-btn depressed color="success" @click="goto('/crudlocalstorage')">LocalStorage</v-btn>
+        <v-btn depressed color="success" @click="goto('/crudfirestore')">Firestore</v-btn>
+        <v-btn to="/profile" target="_blank" text class="hidden-sm-and-down">
+          <span class="mr-2">Profile</span>
           <v-icon>mdi-open-in-new</v-icon>
         </v-btn>
       </v-toolbar-items>
 
-      <v-app-bar-nav-icon
-        @click.stop="drawer = !drawer"
-        class="hidden-md-and-up"
-      ></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
       <v-list-item>
         <v-list-item-avatar>
-          <v-img src="https://stickershop.line-scdn.net/stickershop/v1/product/1405071/LINEStorePC/main.png;compress=true"></v-img>
+          <v-img
+            src="https://stickershop.line-scdn.net/stickershop/v1/product/1405071/LINEStorePC/main.png;compress=true"
+          ></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>
@@ -81,9 +59,11 @@
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title @click="goto(item.link)">{{
-              item.title
-            }}</v-list-item-title>
+            <v-list-item-title @click="goto(item.link)">
+              {{
+                item.title
+              }}
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -96,6 +76,7 @@
 </template>
 
 <script>
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 export default {
   name: "App",
 
@@ -103,8 +84,9 @@ export default {
     drawer: null,
     items: [
       { title: "Home", icon: "mdi-view-dashboard", link: "/" },
-      { title: "About", icon: "mdi-forum", link: "/about" },
+      { title: "Profile", icon: "mdi-forum", link: "/profile" },
     ],
+    signInState: false,
   }),
 
   methods: {
@@ -114,6 +96,38 @@ export default {
     menuItems() {
       return this.menu;
     },
+    SignOut() {
+      const auth = getAuth();
+      signOut(auth)
+        .then(() => {
+          // Sign-out successful. 
+          this.$router.push({ path: "/signinform" });
+        })
+        .catch((error) => {
+          // An error happened. 
+          console.log(error);
+        });
+    },
+    authStateChanged() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // User is signed in, see docs for a list of available properties 
+          // https://firebase.google.com/docs/reference/js/firebase.User 
+          console.log(user);
+          this.signInState = true;
+          // ... 
+        } else {
+          this.signInState = false;
+          // User is signed out 
+          // ... 
+        }
+      });
+    },
+
+  },
+  mounted() {
+    this.authStateChanged();
   },
 };
 </script>
@@ -123,3 +137,7 @@ export default {
   cursor: pointer;
 }
 </style>
+
+.pointer {
+  cursor: pointer;
+}

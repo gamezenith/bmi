@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <span class="bg"></span>
+    <!-- <span class="bg"></span> -->
     <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
         <v-img
@@ -137,7 +137,7 @@ export default {
 .pointer {
   cursor: pointer;
 }
-.bg {
+/* .bg {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -147,7 +147,7 @@ export default {
     background-size: cover;
     background-color: red;
     transform: scale(1.1);
-  }
+  } */
 </style>
 
 .pointer {
